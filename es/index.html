@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <script src="../assets/idioma-estudo.js"></script>
+  <link rel="alternate" hreflang="pt-BR" href="https://lariantunez.github.io/painel-contagem-estoque/">
+  <link rel="alternate" hreflang="en" href="https://lariantunez.github.io/painel-contagem-estoque/en/">
+  <link rel="alternate" hreflang="es" href="https://lariantunez.github.io/painel-contagem-estoque/es/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Panel Bella · Estudio de caso</title>
+  <meta name="description" content="Estudio de caso: panel de sell out con inventario proveniente de conteo manual en las tiendas. El panel genera la planilla de conteo, valida lo que regresa y muestra la posición más reciente. Demostración con datos ficticios.">
+  <meta property="og:title" content="Panel Bella · cuando el inventario viene de la tienda">
+  <meta property="og:description" content="Sell out del sistema del cliente e inventario del conteo manual, en el mismo panel.">
+  <meta property="og:image" content="../assets/painel-estoque.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/estudo.css">
+  <style>
+    /* Identidade do Painel Bella: azul dos gráficos de valor do painel, sobre azul-marinho. */
+    :root { --accent: #38bdf8; --accent-2: #38bdf8; --on-accent: #0d0f14; --accent-wash: rgba(56, 189, 248, 0.11); }
+    :root[data-theme="light"] { --accent: #0369a1; --accent-2: #0369a1; --on-accent: #fff; --accent-wash: rgba(3, 105, 161, 0.09); }
+    @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --accent: #0369a1; --accent-2: #0369a1; --on-accent: #fff; --accent-wash: rgba(3, 105, 161, 0.09); } }
+  </style>
+</head>
+<body>
+  <header class="topo">
+    <div class="wrap">
+      <a class="marca" href="#inicio"><i></i>Panel Bella</a>
+      <nav>
+        <a class="opcional" href="https://lariantunez.github.io/Vitrine-de-projetos/?lang=es">Portafolio</a>
+        <a class="opcional" href="#c00">Estudio de caso</a>
+        <a class="opcional" href="https://github.com/lariantunez/painel-contagem-estoque">Código</a>
+        <a href="../painel/">Abrir panel</a>
+        <div class="idiomas" role="group" aria-label="Idioma"><a href="../?lang=pt" data-idioma="pt" hreflang="pt-BR">PT</a><a href="../en/" data-idioma="en" hreflang="en">EN</a><a href="./" data-idioma="es" hreflang="es" aria-current="true">ES</a></div>
+        <button class="btn-tema" id="tema" type="button" aria-label="Cambiar tema">☀</button>
+      </nav>
+      <span class="progresso"></span>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <section class="abertura">
+      <div class="wrap">
+        <span class="selo-topo"><b>●</b> Proyecto en producción · demostración con datos ficticios</span>
+        <h1>Cuando el inventario <em>viene de la tienda</em>.</h1>
+        <p class="lead">En este cliente, la venta llega de su propio sistema, pero el inventario no: se cuenta a mano en las tiendas. El panel pasó a generar la planilla de conteo ya lista, validar lo que regresa y mostrar la posición más reciente junto al sell out, sin que nadie arme una planilla.</p>
+        <div class="acoes">
+          <a class="btn primario" href="../painel/">Explorar el panel →</a>
+          <a class="btn" href="#c00">Leer el estudio de caso</a>
+        </div>
+        <div class="numeros">
+          <div><strong>2</strong><span>fuentes: el sistema del cliente y el conteo en las tiendas</span></div>
+          <div><strong>1</strong><span>planilla de conteo generada por el panel</span></div>
+          <div><strong>4</strong><span>bases de entrada</span></div>
+          <div><strong>52</strong><span>rutas de API en el backend</span></div>
+          <div><strong>37</strong><span>versiones publicadas en un mes</span></div>
+        </div>
+        <figure class="vitrine">
+          <div class="barra-janela"><i></i><i></i><i></i><span>painel/ · Inventario (datos ficticios)</span></div>
+          <img src="../assets/painel-estoque.jpg" alt="Pestaña Inventario del Panel Bella: inventario total, tiendas con inventario, mayor y menor inventario y gráfico por mes" width="1440" height="900">
+        </figure>
+      </div>
+    </section>
+
+    <div class="wrap livro">
+      <aside class="indice" aria-label="Capítulos">
+        <p>Capítulos</p>
+        <ol>
+          <li><a href="#c00"><b>00</b>El desafío</a></li>
+          <li><a href="#c01"><b>01</b>Dos fuentes, un panel</a></li>
+          <li><a href="#c02"><b>02</b>Las bases</a></li>
+          <li><a href="#c03"><b>03</b>El ciclo del conteo</a></li>
+          <li><a href="#c04"><b>04</b>Una planilla que se arma sola</a></li>
+          <li><a href="#c05"><b>05</b>Importación</a></li>
+          <li><a href="#c06"><b>06</b>Front-end</a></li>
+          <li><a href="#c07"><b>07</b>Línea de tiempo</a></li>
+          <li><a href="#c08"><b>08</b>Producción y demo</a></li>
+        </ol>
+      </aside>
+
+      <div class="capitulos">
+        <!-- 00 -->
+        <section class="capitulo" id="c00">
+          <span class="rotulo-cap">00 · El desafío</span>
+          <h2>La venta tiene sistema. El inventario tiene tabla de apuntes.</h2>
+          <p>La dirección comercial quería seguir a este cliente como a los demás: sell out en cantidad y valor, inventario y el cruce entre ambos. La extracción del sistema del cliente traía la venta, pero la posición de inventario de nuestros productos en las tiendas venía de <strong>conteos manuales</strong> hechos en las tiendas y registrados en planillas sueltas, cada una con un formato distinto.</p>
+          <p class="destaque revelar">Sin un conteo estandarizado, no hay comparación entre tiendas ni entre fechas. El problema empezaba antes del panel: en la planilla en blanco.</p>
+        </section>
+
+        <!-- 01 -->
+        <section class="capitulo" id="c01">
+          <span class="rotulo-cap">01 · Dos fuentes, un panel</span>
+          <h2>La base técnica de los paneles de sell out, con una nueva fuente de inventario.</h2>
+          <p>El proyecto parte de la misma arquitectura del <a href="https://lariantunez.github.io/painel-sellout-varejo/">Panel Vitta</a>: importación con campos precalculados, caché, deshacer por lote, historial y usuarios con roles. La diferencia está en el inventario, que ganó colección, importación, validación y plantilla propias.</p>
+          <div class="grade g2 revelar">
+            <div class="cartao azul"><span class="num">VENTA</span><h4>Sistema del cliente</h4><p>Datos brutos de venta por tienda y producto, con mes de referencia cuando el archivo es mensual. Alimentan las pestañas de venta.</p></div>
+            <div class="cartao verde"><span class="num">INVENTARIO</span><h4>Conteo en las tiendas</h4><p>Planilla estandarizada con fecha del conteo, sucursal, producto, EAN y cantidad. El panel muestra siempre el conteo más reciente.</p></div>
+          </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="capitulo" id="c02">
+          <span class="rotulo-cap">02 · Las bases</span>
+          <h2>Cuatro archivos, cada uno con su regla.</h2>
+          <div class="tabela-rolagem revelar">
+            <table class="tabela">
+              <thead><tr><th>Base</th><th>Columnas</th><th>Al importar</th><th>Precauciones</th></tr></thead>
+              <tbody>
+                <tr><td>Datos brutos</td><td><code>Data</code> o mes de referencia, <code>Loja</code>, <code>GTIN/PLU</code>, <code>Produto</code>, <code>Venda (Qtd)</code>, <code>Venda (R$)</code></td><td><span class="ok">Complementa</span> el historial</td><td>Nombres de columna del mes normalizados; valores del XLSX preservados en la importación progresiva</td></tr>
+                <tr><td>Inventario manual</td><td><code>Data da Contagem</code> <code>Filial</code> <code>Categoria</code> <code>Nome do Produto</code> <code>EAN</code> <code>Quantidade em Estoque</code></td><td><span class="alerta">Reemplaza</span> el conteo anterior</td><td>Rechaza archivos sin las columnas obligatorias, sin filas válidas o totalmente en cero</td></tr>
+                <tr><td>Equivalencias de categorías</td><td>Código de barras (acepta más de un nombre de columna), categoría, familia, nombre del producto</td><td><span class="alerta">Reemplaza</span> la tabla de equivalencias</td><td>Clasifica venta e inventario con la misma tabla de equivalencias</td></tr>
+                <tr><td>Equivalencias de tiendas</td><td><code>Cod_Loja</code> <code>Nome_Fantasia</code></td><td><span class="alerta">Reemplaza</span> la tabla de equivalencias</td><td>La venta de sucursales aún sin equivalencia sigue en los totales</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="capitulo" id="c03">
+          <span class="rotulo-cap">03 · El ciclo del conteo</span>
+          <h2>Descargar, contar, importar, ver.</h2>
+          <div class="fluxo revelar" role="img" aria-label="Ciclo: el panel genera la planilla, la tienda cuenta, el archivo se importa y se valida, el panel muestra el conteo más reciente">
+            <div class="coluna"><b>1 · Generar</b>
+              <div class="item erp">Planilla de conteo<small>todas las tiendas × todos los productos</small></div>
+              <div class="item">Última cantidad contada<small>ya completada, para verificar</small></div>
+            </div>
+            <div class="seta">→</div>
+            <div class="coluna"><b>2 · Contar</b>
+              <div class="item bi">En las tiendas<small>solo cambia la columna de cantidad</small></div>
+            </div>
+            <div class="seta">→</div>
+            <div class="coluna"><b>3 · Importar</b>
+              <div class="item">Validación<small>columnas, filas válidas, conteo distinto de cero</small></div>
+              <div class="item">Clasificación<small>categoría y familia por EAN</small></div>
+            </div>
+            <div class="seta">→</div>
+            <div class="coluna"><b>4 · Ver</b>
+              <div class="item fato">estoque_manual<small>posición del último conteo</small></div>
+              <div class="item">Sell out × inventario<small>lado a lado en el panel</small></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="capitulo" id="c04">
+          <span class="rotulo-cap">04 · Una planilla que se arma sola</span>
+          <h2>La plantilla de conteo nace de los datos actuales.</h2>
+          <p>El botón de plantilla no entrega una planilla vacía genérica. Arma el conteo a partir de lo que el panel ya sabe:</p>
+          <div class="grade g2 revelar">
+            <div class="cartao"><span class="num">FILAS</span><h4>Cada tienda × cada producto</h4><p>Las tiendas vienen de la tabla de equivalencias de tiendas y los productos, de la de categorías. Nadie olvida un artículo ni escribe mal el EAN.</p></div>
+            <div class="cartao"><span class="num">CANTIDAD</span><h4>El último conteo como punto de partida</h4><p>Si ya existe un conteo, la plantilla viene con la cantidad de la fecha más reciente. Sin historial, la columna queda en blanco.</p></div>
+            <div class="cartao"><span class="num">DISPONIBLE</span><h4>Funciona incluso con la base de datos iniciando</h4><p>Si la base de datos todavía está arrancando o la generación falla, el servidor entrega una plantilla base guardada junto con la aplicación.</p></div>
+            <div class="cartao"><span class="num">LIMPIA</span><h4>Solo las columnas correctas</h4><p>Las plantillas de importación salen sin las columnas calculadas por el panel, para que el archivo regrese exactamente en el formato esperado.</p></div>
+          </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="capitulo" id="c05">
+          <span class="rotulo-cap">05 · Importación</span>
+          <h2>Progreso real, valores intactos.</h2>
+          <div class="revelar">
+            <div class="mudanca"><div class="antes"><b>Antes</b>La barra de progreso avanzaba por estimación.</div><div class="seta">→</div><div class="depois"><b>Después</b>Progreso real, lote a lote, mientras el archivo se envía por partes.</div></div>
+            <div class="mudanca"><div class="antes"><b>Antes</b>En la importación progresiva, las celdas del XLSX podían perder su formato original.</div><div class="seta">→</div><div class="depois"><b>Después</b>Valores del XLSX preservados durante la lectura por partes.</div></div>
+            <div class="mudanca"><div class="antes"><b>Antes</b>Las ventas de sucursales sin equivalencia desaparecían de los totales.</div><div class="seta">→</div><div class="depois"><b>Después</b>Esas filas entran en el sell out total, y el número coincide con el archivo importado.</div></div>
+            <div class="mudanca"><div class="antes"><b>Antes</b>El servidor esperaba a la base de datos para empezar a responder.</div><div class="seta">→</div><div class="depois"><b>Después</b>El servidor arranca antes de la inicialización de Mongo y el panel responde justo después del deploy.</div></div>
+          </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="capitulo" id="c06">
+          <span class="rotulo-cap">06 · Front-end</span>
+          <h2>Las pestañas de siempre, con el inventario contado.</h2>
+          <p>La interfaz sigue la familia de paneles de sell out (Ventas Sell Out, Venta en Valor, Venta por Día, Inventario, Sell Out × Inventario, Importar y Gestionar Usuarios). Aquí se refinaron los filtros: seleccionar todas las opciones de una vez, marcar y desmarcar todo y mantener el gráfico mensual al filtrar una tienda.</p>
+          <div class="galeria revelar">
+            <figure><img src="../assets/painel-se.jpg" alt="Pestaña Sell Out x Inventario del Panel Bella" loading="lazy" width="1440" height="900"><figcaption>Sell Out × Inventario: la venta junto al conteo.</figcaption></figure>
+            <figure><img src="../assets/painel-importar.jpg" alt="Pestaña Importar del Panel Bella con el inventario manual" loading="lazy" width="1440" height="900"><figcaption>Importar: datos brutos, inventario manual y tablas de equivalencias.</figcaption></figure>
+            <figure><img src="../assets/painel-vendas.jpg" alt="Pestaña Ventas Sell Out del Panel Bella" loading="lazy" width="1440" height="900"><figcaption>Ventas Sell Out por mes y por tienda.</figcaption></figure>
+            <figure><img src="../assets/painel-dia.jpg" alt="Pestaña Venta por Día del Panel Bella" loading="lazy" width="1440" height="900"><figcaption>Venta por Día: promedio y mejor día.</figcaption></figure>
+          </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="capitulo" id="c07">
+          <span class="rotulo-cap">07 · Línea de tiempo</span>
+          <h2>Tres días de construcción, un mes hasta la demostración.</h2>
+          <ol class="linha-tempo revelar">
+            <li><time>27 jul</time><b>Panel en línea</b><span>Estructura inicial, barra de progreso, validación del inventario, filtros con “seleccionar todo”, mes de referencia en los datos brutos y servidor que arranca antes de la base de datos.</span></li>
+            <li><time>29 jul</time><b>Plantillas inteligentes</b><span>Progreso real por lotes, valores del XLSX preservados, plantillas generadas a partir de los datos actuales, plantilla de conteo con respaldo y sucursales sin equivalencia en los totales.</span></li>
+            <li><time>21 ago</time><b>Demostración pública</b><span>Versión estática con API simulada en el navegador, para el portafolio.</span></li>
+          </ol>
+          <p>De la misma familia: <a href="https://lariantunez.github.io/painel-sellout-varejo/">Panel Vitta</a>, la base técnica, y <a href="https://lariantunez.github.io/painel-sellout-de-para/">Panel Atlas</a>, con la tabla de equivalencias intermedia de GTIN.</p>
+        </section>
+
+        <!-- 08 -->
+        <section class="capitulo" id="c08">
+          <span class="rotulo-cap">08 · Producción y demostración</span>
+          <h2>En producción en Koyeb; aquí, en el navegador.</h2>
+          <div class="arquitetura revelar">
+            <div class="caixa"><span class="tag">Navegador</span><b>Front-end</b><ul><li>HTML, CSS y JS puro</li><li>envío por lotes con progreso real</li></ul></div>
+            <div class="seta">⇄</div>
+            <div class="caixa"><span class="tag">Koyeb · Docker</span><b>Node.js + Express</b><ul><li>52 rutas, caché en memoria</li><li>genera las plantillas de conteo</li><li>login, roles y restablecimiento por correo</li></ul></div>
+            <div class="seta">⇄</div>
+            <div class="caixa"><span class="tag">MongoDB Atlas</span><b>Datos</b><ul><li>datos brutos e inventario manual</li><li>tablas de equivalencias, logs y usuarios</li></ul></div>
+          </div>
+          <p>En esta demostración no hay servidor ni base de datos. Un módulo (<code>mock-api.js</code>) intercepta las llamadas del panel en el navegador y responde con tiendas, productos y números inventados. El <strong>front-end es el mismo de producción</strong>. La planilla de conteo incluida en el repositorio también es ficticia.</p>
+          <h3>Tecnologías</h3>
+          <div class="pilulas">
+            <span>Node.js</span><span>Express</span><span>MongoDB Atlas</span><span>JavaScript sin framework</span><span>SheetJS (XLSX)</span><span>Multer</span><span>csv-parser</span><span>Nodemailer</span><span>Docker</span><span>Koyeb</span>
+          </div>
+          <div class="encerramento revelar">
+            <span class="rotulo-cap">Pruébalo</span>
+            <h2>Abre la pestaña Estoque (Inventario) y después Sell Out × Estoque.</h2>
+            <p class="texto">Filtra una categoría y compara la venta del mes con el inventario contado en las tiendas.</p>
+            <div class="acoes"><a class="btn primario" href="../painel/">Abrir el panel →</a><a class="btn" href="https://github.com/lariantunez/painel-contagem-estoque">Ver el código</a></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span><strong>Larissa Antunez</strong> · Analytics &amp; Desarrollo</span>
+      <span>Proyecto en producción · demostración con datos ficticios</span>
+    </div>
+  </footer>
+  <script src="../assets/estudo.js"></script>
+</body>
+</html>
