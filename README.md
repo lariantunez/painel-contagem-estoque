@@ -4,6 +4,8 @@
 
 ![Painel Bella com dados fictícios](assets/painel-estoque.jpg)
 
+> **Versão de portfólio.** O painel original roda em produção, com dados reais do cliente. Esta versão usa o mesmo código, com dados e nomes fictícios.
+
 Dashboard web desenvolvido para automatizar análises comerciais do cliente Bella, transformando consultas antes feitas manualmente em planilhas dinâmicas em um painel com importação, tratamento e indicadores executivos.
 
 O projeto contempla vendas, valor, estoque e rotinas específicas de contagem manual de estoque, com filtros e agregações preparadas para uso pela diretoria comercial.
@@ -43,7 +45,7 @@ Reduzir trabalho manual em Excel e oferecer uma visão recorrente, padronizada e
 backend/src/server.js                API, importacoes, autenticacao e agregacoes
 frontend/index.html                  Dashboard e administracao
 frontend/reset-senha.html            Redefinicao de senha
-modelo_contagem_estoque_bella.xlsx Modelo de contagem de estoque com lojas e produtos ficticios
+modelo_contagem_estoque_bella.xlsx   Modelo de contagem de estoque com lojas e produtos ficticios
 docs/                                Manuais de uso e manutencao
 README_DEPLOY.md                     Notas de deploy
 Dockerfile                           Build da aplicacao
@@ -83,3 +85,7 @@ O repositório deve permanecer sem bases reais, credenciais, uploads e planilhas
 ## Status
 
 Projeto funcional, com rotinas de importação, dashboard analítico, administração e deploy via Docker.
+
+---
+
+**🇺🇸 English:** a sell-out and inventory dashboard for a client whose stock comes from manual store counts. The app generates the counting spreadsheet ready to fill in, validates what comes back and shows the latest stock position next to sales. It includes imports with date, GTIN/EAN and number handling, store and category mapping, admin tools and a read-only demo mode. Stack: Node.js, Express, MongoDB Atlas, plain JavaScript, Docker. Portfolio version with fictional data; the original runs in production.
