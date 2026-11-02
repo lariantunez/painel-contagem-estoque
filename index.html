@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel Bella · Estudo de caso</title>
+  <meta name="description" content="Estudo de caso: painel de sell out com estoque vindo de contagem manual nas lojas. O painel gera a planilha de contagem, valida o retorno e mostra a posição mais recente. Demonstração com dados fictícios.">
+  <meta property="og:title" content="Painel Bella · quando o estoque vem da loja">
+  <meta property="og:description" content="Sell out do sistema do cliente e estoque da contagem manual, no mesmo painel.">
+  <meta property="og:image" content="assets/painel-estoque.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/estudo.css">
+  <style>
+    /* Identidade do Painel Bella: azul dos gráficos de valor do painel, sobre azul-marinho. */
+    :root { --accent: #38bdf8; --accent-2: #38bdf8; --on-accent: #0d0f14; --accent-wash: rgba(56, 189, 248, 0.11); }
+    :root[data-theme="light"] { --accent: #0369a1; --accent-2: #0369a1; --on-accent: #fff; --accent-wash: rgba(3, 105, 161, 0.09); }
+    @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --accent: #0369a1; --accent-2: #0369a1; --on-accent: #fff; --accent-wash: rgba(3, 105, 161, 0.09); } }
+  </style>
+</head>
+<body>
+  <header class="topo">
+    <div class="wrap">
+      <a class="marca" href="#inicio"><i></i>Painel Bella</a>
+      <nav>
+        <a class="opcional" href="https://lariantunez.github.io/Vitrine-de-projetos/">Vitrine</a>
+        <a class="opcional" href="#c00">Estudo de caso</a>
+        <a class="opcional" href="https://github.com/lariantunez/painel-contagem-estoque">Código</a>
+        <a href="painel/">Abrir painel</a>
+        <button class="btn-tema" id="tema" type="button" aria-label="Trocar tema">☀</button>
+      </nav>
+      <span class="progresso"></span>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <section class="abertura">
+      <div class="wrap">
+        <span class="selo-topo"><b>●</b> Projeto em produção · demonstração com dados fictícios</span>
+        <h1>Quando o estoque <em>vem da loja</em>.</h1>
+        <p class="lead">Neste cliente, a venda chega do sistema dele, mas o estoque não: ele é contado à mão nas lojas. O painel passou a gerar a planilha de contagem já pronta, validar o que volta e mostrar a posição mais recente ao lado do sell out, sem ninguém montar planilha.</p>
+        <div class="acoes">
+          <a class="btn primario" href="painel/">Explorar o painel →</a>
+          <a class="btn" href="#c00">Ler o estudo de caso</a>
+        </div>
+        <div class="numeros">
+          <div><strong>2</strong><span>fontes: sistema do cliente e contagem nas lojas</span></div>
+          <div><strong>1</strong><span>planilha de contagem gerada pelo painel</span></div>
+          <div><strong>4</strong><span>bases de entrada</span></div>
+          <div><strong>52</strong><span>rotas de API no backend</span></div>
+          <div><strong>37</strong><span>versões publicadas em um mês</span></div>
+        </div>
+        <figure class="vitrine">
+          <div class="barra-janela"><i></i><i></i><i></i><span>painel/ · Estoque (dados fictícios)</span></div>
+          <img src="assets/painel-estoque.jpg" alt="Aba Estoque do Painel Bella: estoque total, lojas com estoque, maior e menor estoque e gráfico por mês" width="1440" height="900">
+        </figure>
+      </div>
+    </section>
+
+    <div class="wrap livro">
+      <aside class="indice" aria-label="Capítulos">
+        <p>Capítulos</p>
+        <ol>
+          <li><a href="#c00"><b>00</b>O desafio</a></li>
+          <li><a href="#c01"><b>01</b>Duas fontes, um painel</a></li>
+          <li><a href="#c02"><b>02</b>As bases</a></li>
+          <li><a href="#c03"><b>03</b>O ciclo da contagem</a></li>
+          <li><a href="#c04"><b>04</b>Planilha que se monta</a></li>
+          <li><a href="#c05"><b>05</b>Importação</a></li>
+          <li><a href="#c06"><b>06</b>Front-end</a></li>
+          <li><a href="#c07"><b>07</b>Linha do tempo</a></li>
+          <li><a href="#c08"><b>08</b>Produção e demo</a></li>
+        </ol>
+      </aside>
+
+      <div class="capitulos">
+        <!-- 00 -->
+        <section class="capitulo" id="c00">
+          <span class="rotulo-cap">00 · O desafio</span>
+          <h2>A venda tem sistema. O estoque tem prancheta.</h2>
+          <p>A diretoria comercial queria acompanhar este cliente como os outros: sell out em quantidade e valor, estoque e o cruzamento dos dois. A extração do sistema do cliente trazia a venda, mas a posição de estoque dos nossos produtos nas lojas vinha de <strong>contagens manuais</strong> feitas nas lojas e registradas em planilhas avulsas, cada uma num formato.</p>
+          <p class="destaque revelar">Sem padrão na contagem, não há comparação entre lojas nem entre datas. O problema começava antes do painel: na planilha em branco.</p>
+        </section>
+
+        <!-- 01 -->
+        <section class="capitulo" id="c01">
+          <span class="rotulo-cap">01 · Duas fontes, um painel</span>
+          <h2>A base técnica dos painéis de sell out, com uma fonte nova de estoque.</h2>
+          <p>O projeto parte da mesma arquitetura do <a href="https://lariantunez.github.io/painel-sellout-varejo/">Painel Vitta</a>: importação com campos pré-calculados, cache, desfazer por lote, histórico e usuários com papéis. A diferença está no estoque, que ganhou coleção, importação, validação e modelo próprios.</p>
+          <div class="grade g2 revelar">
+            <div class="cartao azul"><span class="num">VENDA</span><h4>Sistema do cliente</h4><p>Dados brutos de venda por loja e produto, com mês de referência quando o arquivo é mensal. Alimentam as abas de venda.</p></div>
+            <div class="cartao verde"><span class="num">ESTOQUE</span><h4>Contagem nas lojas</h4><p>Planilha padronizada com data da contagem, filial, produto, EAN e quantidade. O painel mostra sempre a contagem mais recente.</p></div>
+          </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="capitulo" id="c02">
+          <span class="rotulo-cap">02 · As bases</span>
+          <h2>Quatro arquivos, cada um com sua regra.</h2>
+          <div class="tabela-rolagem revelar">
+            <table class="tabela">
+              <thead><tr><th>Base</th><th>Colunas</th><th>Ao importar</th><th>Cuidados</th></tr></thead>
+              <tbody>
+                <tr><td>Dados brutos</td><td><code>Data</code> ou mês de referência, <code>Loja</code>, <code>GTIN/PLU</code>, <code>Produto</code>, <code>Venda (Qtd)</code>, <code>Venda (R$)</code></td><td><span class="ok">Complementa</span> o histórico</td><td>Nomes de coluna do mês normalizados; valores do XLSX preservados na importação progressiva</td></tr>
+                <tr><td>Estoque manual</td><td><code>Data da Contagem</code> <code>Filial</code> <code>Categoria</code> <code>Nome do Produto</code> <code>EAN</code> <code>Quantidade em Estoque</code></td><td><span class="alerta">Substitui</span> a contagem anterior</td><td>Recusa arquivo sem as colunas obrigatórias, sem linhas válidas ou totalmente zerado</td></tr>
+                <tr><td>De/Para Categorias</td><td>Código de barras (aceita mais de um nome de coluna), categoria, família, nome do produto</td><td><span class="alerta">Substitui</span> o mapeamento</td><td>Classifica venda e estoque pelo mesmo de-para</td></tr>
+                <tr><td>De/Para Lojas</td><td><code>Cod_Loja</code> <code>Nome_Fantasia</code></td><td><span class="alerta">Substitui</span> o mapeamento</td><td>Venda de filial ainda sem mapeamento continua nos totais</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="capitulo" id="c03">
+          <span class="rotulo-cap">03 · O ciclo da contagem</span>
+          <h2>Baixar, contar, importar, ver.</h2>
+          <div class="fluxo revelar" role="img" aria-label="Ciclo: o painel gera a planilha, a loja conta, o arquivo é importado e validado, o painel mostra a contagem mais recente">
+            <div class="coluna"><b>1 · Gerar</b>
+              <div class="item erp">Planilha de contagem<small>todas as lojas × todos os produtos</small></div>
+              <div class="item">Última quantidade contada<small>já preenchida, para conferir</small></div>
+            </div>
+            <div class="seta">→</div>
+            <div class="coluna"><b>2 · Contar</b>
+              <div class="item bi">Nas lojas<small>só a coluna de quantidade muda</small></div>
+            </div>
+            <div class="seta">→</div>
+            <div class="coluna"><b>3 · Importar</b>
+              <div class="item">Validação<small>colunas, linhas válidas, contagem não zerada</small></div>
+              <div class="item">Classificação<small>categoria e família pelo EAN</small></div>
+            </div>
+            <div class="seta">→</div>
+            <div class="coluna"><b>4 · Ver</b>
+              <div class="item fato">estoque_manual<small>posição da última contagem</small></div>
+              <div class="item">Sell out × estoque<small>lado a lado no painel</small></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="capitulo" id="c04">
+          <span class="rotulo-cap">04 · Planilha que se monta</span>
+          <h2>O modelo de contagem nasce dos dados atuais.</h2>
+          <p>O botão de modelo não entrega uma planilha vazia genérica. Ele monta a contagem a partir do que o painel já sabe:</p>
+          <div class="grade g2 revelar">
+            <div class="cartao"><span class="num">LINHAS</span><h4>Cada loja × cada produto</h4><p>As lojas vêm do de-para de lojas e os produtos do de-para de categorias. Ninguém esquece um item nem digita o EAN errado.</p></div>
+            <div class="cartao"><span class="num">QUANTIDADE</span><h4>A última contagem como ponto de partida</h4><p>Se já existe contagem, o modelo vem com a quantidade da data mais recente. Sem histórico, a coluna fica em branco.</p></div>
+            <div class="cartao"><span class="num">DISPONÍVEL</span><h4>Funciona mesmo com o banco iniciando</h4><p>Se o banco ainda está subindo ou a geração falha, o servidor entrega um modelo base guardado junto com a aplicação.</p></div>
+            <div class="cartao"><span class="num">LIMPO</span><h4>Só as colunas certas</h4><p>Os modelos de importação saem sem as colunas calculadas pelo painel, para o arquivo voltar exatamente no formato esperado.</p></div>
+          </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="capitulo" id="c05">
+          <span class="rotulo-cap">05 · Importação</span>
+          <h2>Progresso real, valores intactos.</h2>
+          <div class="revelar">
+            <div class="mudanca"><div class="antes"><b>Antes</b>A barra de progresso andava por estimativa.</div><div class="seta">→</div><div class="depois"><b>Depois</b>Progresso real, lote a lote, enquanto o arquivo é enviado em partes.</div></div>
+            <div class="mudanca"><div class="antes"><b>Antes</b>Na importação progressiva, células do XLSX podiam perder o formato original.</div><div class="seta">→</div><div class="depois"><b>Depois</b>Valores do XLSX preservados durante a leitura em partes.</div></div>
+            <div class="mudanca"><div class="antes"><b>Antes</b>Vendas de filiais sem de-para sumiam dos totais.</div><div class="seta">→</div><div class="depois"><b>Depois</b>Essas linhas entram no sell out total, e o número bate com o arquivo importado.</div></div>
+            <div class="mudanca"><div class="antes"><b>Antes</b>O servidor esperava o banco para começar a responder.</div><div class="seta">→</div><div class="depois"><b>Depois</b>O servidor sobe antes da inicialização do Mongo e o painel responde logo após o deploy.</div></div>
+          </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="capitulo" id="c06">
+          <span class="rotulo-cap">06 · Front-end</span>
+          <h2>As abas de sempre, com o estoque contado.</h2>
+          <p>A interface segue a família de painéis de sell out (Vendas Sell Out, Venda Valor, Venda por Dia, Estoque, Sell Out × Estoque, Importar e Gerenciar Usuários). Os filtros foram refinados aqui: selecionar todas as opções de uma vez, marcar e desmarcar tudo e manter o gráfico mensal ao filtrar uma loja.</p>
+          <div class="galeria revelar">
+            <figure><img src="assets/painel-se.jpg" alt="Aba Sell Out x Estoque do Painel Bella" loading="lazy" width="1440" height="900"><figcaption>Sell Out × Estoque: venda ao lado da contagem.</figcaption></figure>
+            <figure><img src="assets/painel-importar.jpg" alt="Aba Importar do Painel Bella com o estoque manual" loading="lazy" width="1440" height="900"><figcaption>Importar: dados brutos, estoque manual e de-paras.</figcaption></figure>
+            <figure><img src="assets/painel-vendas.jpg" alt="Aba Vendas Sell Out do Painel Bella" loading="lazy" width="1440" height="900"><figcaption>Vendas Sell Out por mês e por loja.</figcaption></figure>
+            <figure><img src="assets/painel-dia.jpg" alt="Aba Venda por Dia do Painel Bella" loading="lazy" width="1440" height="900"><figcaption>Venda por Dia: média e melhor dia.</figcaption></figure>
+          </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="capitulo" id="c07">
+          <span class="rotulo-cap">07 · Linha do tempo</span>
+          <h2>Três dias de construção, um mês até a demonstração.</h2>
+          <ol class="linha-tempo revelar">
+            <li><time>27 jul</time><b>Painel no ar</b><span>Estrutura inicial, barra de progresso, validação do estoque, filtros com “selecionar tudo”, mês de referência nos dados brutos e servidor iniciando antes do banco.</span></li>
+            <li><time>29 jul</time><b>Modelos inteligentes</b><span>Progresso real por lotes, valores do XLSX preservados, modelos gerados a partir dos dados atuais, modelo de contagem com fallback e filiais sem de-para nos totais.</span></li>
+            <li><time>21 ago</time><b>Demonstração pública</b><span>Versão estática com API simulada no navegador, para portfólio.</span></li>
+          </ol>
+          <p>Da mesma família: <a href="https://lariantunez.github.io/painel-sellout-varejo/">Painel Vitta</a>, a base técnica, e <a href="https://lariantunez.github.io/painel-sellout-de-para/">Painel Atlas</a>, com o de-para intermediário de GTIN.</p>
+        </section>
+
+        <!-- 08 -->
+        <section class="capitulo" id="c08">
+          <span class="rotulo-cap">08 · Produção e demonstração</span>
+          <h2>Em produção no Koyeb; aqui, no navegador.</h2>
+          <div class="arquitetura revelar">
+            <div class="caixa"><span class="tag">Navegador</span><b>Front-end</b><ul><li>HTML, CSS e JS puro</li><li>envio em lotes com progresso real</li></ul></div>
+            <div class="seta">⇄</div>
+            <div class="caixa"><span class="tag">Koyeb · Docker</span><b>Node.js + Express</b><ul><li>52 rotas, cache em memória</li><li>gera os modelos de contagem</li><li>login, papéis e reset por e-mail</li></ul></div>
+            <div class="seta">⇄</div>
+            <div class="caixa"><span class="tag">MongoDB Atlas</span><b>Dados</b><ul><li>dados brutos e estoque manual</li><li>de-paras, logs e usuários</li></ul></div>
+          </div>
+          <p>Nesta demonstração não há servidor nem banco. Um módulo (<code>mock-api.js</code>) intercepta as chamadas do painel no navegador e responde com lojas, produtos e números inventados. O <strong>front-end é o mesmo da produção</strong>. A planilha de contagem incluída no repositório também é fictícia.</p>
+          <h3>Tecnologias</h3>
+          <div class="pilulas">
+            <span>Node.js</span><span>Express</span><span>MongoDB Atlas</span><span>JavaScript sem framework</span><span>SheetJS (XLSX)</span><span>Multer</span><span>csv-parser</span><span>Nodemailer</span><span>Docker</span><span>Koyeb</span>
+          </div>
+          <div class="encerramento revelar">
+            <span class="rotulo-cap">Experimente</span>
+            <h2>Abra a aba Estoque e depois Sell Out × Estoque.</h2>
+            <p class="texto">Filtre uma categoria e compare a venda do mês com o estoque contado nas lojas.</p>
+            <div class="acoes"><a class="btn primario" href="painel/">Abrir o painel →</a><a class="btn" href="https://github.com/lariantunez/painel-contagem-estoque">Ver o código</a></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span><strong>Larissa Antunez</strong> · Analytics &amp; Desenvolvimento</span>
+      <span>Projeto em produção · demonstração com dados fictícios</span>
+    </div>
+  </footer>
+  <script src="assets/estudo.js"></script>
+</body>
+</html>
